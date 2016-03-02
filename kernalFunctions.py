@@ -31,12 +31,15 @@ def polynomialK(u,v,b):
 def gaussianK(v1, v2, sigma):
     return np.exp(-norm(v1-v2, 2)**2/(2.*sigma**2))
     
+#computes the gramMatrix given a set of all points included in the data
 def compute_gramMatrix(allPoints):
     b = 5 #constant for the polynomialKernal Funciton
-    gramMatrix = []
+    gramMatrix =  []
+    row = []
     for n in allPoints:
         for v in allPoints:
-        gramMatrix.append(polynomialK(n,v,b))
+            row.append(polynomialK(n,v,b))
+        gramMatrix.append(row)
     return gramMatrix
         
         
