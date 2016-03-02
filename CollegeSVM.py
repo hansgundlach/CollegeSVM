@@ -11,7 +11,8 @@ Created on Tue Mar  1 08:28:01 2016
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-
+import cvxopt
+#http://www.tristanfletcher.co.uk/SVM%20Explained.pdf
 
 class SVM:
     def __init__(self,X,y):
@@ -19,7 +20,8 @@ class SVM:
         self.y = y
         
     
-    
+    #def findParameters(self):
+        
     
     
     def printer(self):
