@@ -17,7 +17,6 @@ def norm(X):
         totalSum += n**2
     return np.sqrt(totalSum)
 
-
 #Linear Kernel is just a normal dot product so we can use 
 #numpy.dot(x, y) 
 
@@ -32,13 +31,13 @@ def gaussianK(v1, v2, sigma):
     return np.exp(-norm(v1-v2, 2)**2/(2.*sigma**2))
     
 #computes the gramMatrix given a set of all points included in the data
-def compute_gramMatrix(allPoints):
+def compute_gramMatrix(allPoints, kernal):
     b = 5 #constant for the polynomialKernal Funciton
     gramMatrix =  []
     row = []
     for n in allPoints:
         for v in allPoints:
-            row.append(polynomialK(n,v,b))
+            row.append(kernal(n,v,b))
         gramMatrix.append(row)
     return gramMatrix
         
