@@ -24,8 +24,6 @@ class SVM:
         self.y = y
         
     def findParameters(self):
-        
-        
         # min 1/2 x^T P x + q^T x
         #Ax = b
         #y's are answer vectors 
@@ -76,25 +74,14 @@ class SVM:
 #Polynomial Kernel 
 #follows the form K(u,v) = (u * v + b)**2
 #u and v are the two vectors and b is a constant
-    def polynomialK(u,v,b):
+    def polynomialK(self,u,v,b):
         return (np.dot(u,v)+b)**2    
     
 #Guassian Kernal Funciton 
-    def gaussianK(v1, v2, sigma):
+    def gaussianK(self,v1, v2, sigma):
         return np.exp(-norm(v1-v2, 2)**2/(2.*sigma**2))
     
 #computes the gramMatrix given a set of all points included in the data
-    """def grammatrix(self, allPoints):
-        b = 5 #constant for the polynomialKernal Funciton
-        gramMatrix =  []
-        row = []
-        for n in allPoints:
-            for v in allPoints:
-                row.append(polynomialK(n,v,b))
-                gramMatrix.append(row)
-                #conver to numpy array for matrix multiplication
-        finalAnser = np.asArray(gramMatrix)
-        return finalAnser"""
     
     def gramMatrix(self): 
         gramMatrix = []
@@ -111,16 +98,13 @@ class SVM:
             gramMatrix.append(row)
             #print(row)
         return gramMatrix
+    def determinAcceptance():
+        return 0
                 
-                
-        
-        
-       # print(self.X[0])
-
-    
-    
-    """plot point"""
+    # plots acceptance cutoff
     def Graph(self):
+        weights = [-20,2,5]
+        c = -5
         #here we actaually graph the functionb 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -133,11 +117,14 @@ class SVM:
         ax.set_xlabel("SAT score")
         ax.set_ylabel("GPA")
         ax.set_zlabel("AP scores")
+        #this changes orientation and look of surface
+        ax.view_init(azim = 180+40,elev = 22)
         X = np.arange(-5, 5, 0.25)
         Y = np.arange(-5, 5, 0.25)
         X, Y = np.meshgrid(X, Y)
-        R = np.sqrt(X**2 + Y**2)
-        Z = R**2
+        
+        Z = ((weights[0]*X + weights[1]*Y - b)/(weights[2])) + c
+        #R = np.sqrt(X**2 + Y**2)
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,
                        linewidth=0, antialiased=True)
         plt.show()
