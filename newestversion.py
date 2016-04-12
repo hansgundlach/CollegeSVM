@@ -5,15 +5,11 @@ Created on Tue Mar  1 08:28:01 2016
 @author: HansG17
 """
 
-
-import numpy
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import cvxopt
 from matplotlib import cm
-from cvxopt import matrix, solvers
-from itertools import izip
+
 #http://www.tristanfletcher.co.uk/SVM%20Explained.pdf
 
 class SVM:
@@ -22,25 +18,10 @@ class SVM:
         self.y = y
         
     def findParameters(self,X,y):
-        
         # min 1/2 x^T P x + q^T x
         #Ax = b
-        #y's are answer vectors 
+        #y's are if the student is accepted -1 for being not accpeted 1 for being accpeted 
         #put in cvxopt 
-       # 
-       
-        """P = cvxopt.matrix(np.outer(self.y,self.y)* self.gramMatrix())
-        q = cvxopt.matrix((numpy.ones(len(self.y))).T)
-        #G = 
-        #h = 
-        limits = np.asarray(self.y)
-        A = cvxopt.matrix(limits.T)
-       
-        
-        #genrates matrix of zzeros
-        b = cvxopt.matrix(numpy.zeros(len(self.y)))
-        # actually comp
-        param = cvxopt.solvers.qp(P,q,G,h,A,b);"""
         n_samples, n_features = X.shape
         K = self.gramMatrix(X)
         P = cvxopt.matrix(np.outer(y, y) * K)
@@ -75,22 +56,22 @@ class SVM:
         #this part calculates bias
             #this is a very naive implementation of bias
             #xstuff is the x_coordinate vector we find this by transpose
-            b = 0
+            bunsen = 0
         for i in range(0,len(important)):
-            b = b+ (yi[i]- np.dot(firstsum,X[i]))
+            bunsen = bunsen+ (yi[i]- np.dot(firstsum,X[i]))
             
-        avgB = b/len(important)
+        avgB = bunsen/len(important)
         answer = (firstsum , avgB)
         print("w vector")
         print(firstsum)
         return answer
             
             
-            
+     # kernal is a type of dot product#innerproduct      
     def polynomialK(self,u,v,b):
         return (np.dot(u,v)+b)**2    
     
-#Guassian Kernal Funciton 
+
     def gaussianK(self,v1, v2, sigma):
         return np.exp(-norm(v1-v2, 2)**2/(2.*sigma**2))
     
@@ -139,8 +120,7 @@ class SVM:
         ax.set_ylabel("B")
         ax.set_zlabel("C")
         #this changes orientation and look of surface
-        ax.view_init(azim = 180+160,elev = 0
-        )
+        ax.view_init(azim = 180+160,elev = 0)
         X = np.arange(-1.2, 1.2, 0.25)
         Y = np.arange(-1.2, 1.2, 0.25)
         X, Y = np.meshgrid(X, Y)
@@ -150,16 +130,17 @@ class SVM:
                        linewidth=0, antialiased=True)
         plt.show()
         
-        
 #list of points to test
-a = [[-.1,-.1,-.1],[-.2,-.2,-.2],[.15,.15,.15],[.9,.9,.9],[.95,.95,.95]]
+a = [[.1,.1,.1],[.2,.2,.2],[.15,.15,.15],[.9,.9,.9],[.95,.95,.95]]
 check = np.asarray(a)
-b = [-.99,-1,-1,1,1]
+#acceptance list
+b = [-1.0,-1,-1,1,1]
 bigger =np.asarray(b)
 d = SVM(a,b)
 print(d.gramMatrix(check)[0])
 print("parameters ya")
 print(d.findParameters(check,bigger))
 print(d.WB_calculator(check,bigger))
-d.Graph(check,bigger) 
-print(d.determineAcceptance([.,.01,.01],check,bigger))
+d.Graph(check,bigger)
+#determines acceptance for prospective applicant
+print(d.determineAcceptance([.01,.01,.01],check,bigger))
