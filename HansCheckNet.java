@@ -9,7 +9,8 @@ import java.util.*;
 import java.io.*;
 
 public class Neural_Net {
-	public static final double e = 2.71828;
+
+	public static final double e = MATH.E;
 	private double[][] yHat;
 	//public static double[] firstCol;
 	//public static double[] secondCol;
@@ -27,79 +28,70 @@ public class Neural_Net {
 	private double[][] a2 ; 
 	private double[][] z2 ;
 	
-	
-	
-	
 	public static void main(String args[]) throws FileNotFoundException{
 		//I should be able to make multiple neural nets
 		//if you see anything bad just leave a comment on a method I should implement 
 		//or a variable I should change
 		double inputData[][] = new double[][]{{.1,.1},{.2,.2},{10,10},{20,20}};
-		 double outputData[][] = new double[][]{{10},{10},{99},{105}};
+		double outputData[][] = new double[][]{{10},{10},{99},{105}};
 		//readInput()
-			Neural_Net  firstnet =  new Neural_Net(inputData,outputData); 
-			firstnet.lernen();
-		
+		Neural_Net  firstnet =  new Neural_Net(inputData,outputData); 
+		firstnet.lernen();
 	}
 	
 	//this structure might change when I refactor
-public Neural_Net(double[][] X ,double[][] y){
-	//this vs not this ?
-	 this.input = X;
-	 this.output = y;
-	 this.input_Size = X[0].length;
-	 this.hidden_Layer = X.length;
-	 this.output_Size = y[0].length; 
-	 
-	 this.W1 = randmat(input_Size,hidden_Layer);
-	this.W2 = randmat(hidden_Layer,output_Size);
+	public Neural_Net(double[][] X ,double[][] y){
+		//this vs not this ?
+		this.input = X;
+		this.output = y;
+		this.input_Size = X[0].length;
+		this.hidden_Layer = X.length;
+		this.output_Size = y[0].length; 
+		
+		this.W1 = randmat(input_Size,hidden_Layer);
+		this.W2 = randmat(hidden_Layer,output_Size);
 		//these are Hyperparameters
-		}
+	}
 	
 	//combines all the methods to do full gradient descent
 	public void lernen(){
 		scaling(input);
 		scaling(output);
 		//forms new weights
-		int x =0;
+		int x = 0;
 		while(x<100){
-		forward();
-		costFunction();
-		costFunctionPrime();
-		//subtract djdw from 
-		
-		W1 = matrixSub(W1,multScal(dJdW1,1));
-		W2 = matrixSub(W2,multScal(dJdW2,1));
-		x++;
+			forward();
+			costFunction();
+			costFunctionPrime();
+			//subtract djdw from 
+			
+			W1 = matrixSub(W1,multScal(dJdW1,1));
+			W2 = matrixSub(W2,multScal(dJdW2,1));
+			x++;
 		}
 		forward();
 		costFunction();
-		
-		
-	  }
+  }
 	
-public double[][] forward(){
+	public double[][] forward(){
 		//propagates inputs through network
 		//z_2 = xW
-	z2 = matrixMult(input,W1);
-	 //a2 = f(z_3)
-	 a2 = matrixSigmoid(z2);
-	 //z3 = a_2 * W_2
-	 z3 = matrixMult(a2,W2);
-	 //this is somehow wrong
-	 //yHat is supposed to be 3 by 1 matrix 
-	  this.yHat = matrixSigmoid(z3);
+		z2 = matrixMult(input,W1);
+	 	//a2 = f(z_3)
+	 	a2 = matrixSigmoid(z2);
+	 	//z3 = a_2 * W_2
+	 	z3 = matrixMult(a2,W2);
+	 	//this is somehow wrong
+	 	//yHat is supposed to be 3 by 1 matrix 
+	  	this.yHat = matrixSigmoid(z3);
 	 
 		//this is our prediction	 
 		return yHat;
-		
 	}
 
-//this is the activation function
- public static double sigmoid(double z){
-		
+	//this is the activation function
+	public static double sigmoid(double z){	
 		return 1/(1+Math.pow(2.718, -z));
-		
 	}
 	
 	public static double[][] matrixSigmoid(double[][] unact){
@@ -110,8 +102,6 @@ public double[][] forward(){
 			}
 		}
 		return modified;
-		
-		
 	}
 	
 	//generates random matrix that will be replaced when we start learning
@@ -120,32 +110,33 @@ public double[][] forward(){
 	    for(int i=0;i<arg;i++){
 	    	for(int j=0;j<arg2;j++){
 	    	randn[i][j] = Math.random();
-	    }
+	    	}
 	    }
 	    return randn;
 	}
+
 	//this scales  the vectors so their can be proper comparison
 	public static void scaling(double[][] prescal){
 		double maxvalue = 0;
+		for(int i=0;i<prescal.length;i++){
+			for(int j = 0;j<prescal[0].length;j++){
+				if(prescal[i][j]>maxvalue){
+					maxvalue = prescal[i][j];
+				}
+			}	
+		}
+		for(int i=0;i<prescal.length;i++){
+			for(int j = 0;j<prescal[0].length;j++){
+				prescal[i][j] = prescal[i][j]/maxvalue;
+			}
+		}
+	}
 		
-		for(int i=0;i<prescal.length;i++){
-			for(int j = 0;j<prescal[0].length;j++){
-			if(prescal[i][j]>maxvalue){
-				maxvalue = prescal[i][j];
-			}
-		}
-			
-		}
-		for(int i=0;i<prescal.length;i++){
-			for(int j = 0;j<prescal[0].length;j++){
-			prescal[i][j] = prescal[i][j]/maxvalue;
-			}
-		}
-		}
-		//this is the derivative of the sigmoid activation function used in backpropogation
+	//this is the derivative of the sigmoid activation function used in backpropogation
 	public static double sigmoidPrime(double pre){
 	   return Math.pow(e, - pre)/(Math.pow(1 + Math.pow(e,-pre),2));
 	}
+
 	//applies sigmoid function to a whole matrix
 	 public static double[][] matrixSigmoidPrime(double[][] pre){
 		 double[][] returned = new double[pre.length][pre[0].length];
